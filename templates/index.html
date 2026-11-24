@@ -35,6 +35,11 @@
           <div><p class="eyebrow">THE BOARD</p><h2>Ready, set, connect!</h2></div>
           {% if game %}<span class="depth-tag">DEPTH {{ game.depth }}</span>{% endif %}
         </div>
+        {% if game %}
+          <div class="board-eval"><span>CURRENT BOARD VALUE</span><strong>{{ board_value }}</strong>
+            <small>{{ game.heuristic|replace('_', ' ')|title }} · AI perspective (positive favors AI)</small>
+          </div>
+        {% endif %}
 
         {% if game and not result %}
           <form class="drop-controls" action="{{ url_for('play_move') }}" method="post">
@@ -98,10 +103,13 @@
         <div><p class="eyebrow">AI THOUGHT PROCESS</p><h2>Search tree</h2></div>
         <span class="tree-key"><i class="key-dot max"></i> AI / MAX <i class="key-dot min"></i> HUMAN / MIN</span>
       </div>
-      <p class="tree-help">Arrows show the search direction. Each node is labeled with the player to move and its evaluation.</p>
+      <p class="tree-help">Arrows show the search direction. Click a node to inspect its board and value. Coral dashed nodes marked CUT show where alpha-beta skipped branches.</p>
       {% if tree %}
         <div class="tree-viewport" aria-label="Scrollable minimax game tree">
           <svg id="search-tree" role="img" aria-label="Minimax search tree"></svg>
+        </div>
+        <div id="node-inspector" class="node-inspector" aria-live="polite">
+          <p>Select a tree node to inspect its board and evaluation.</p>
         </div>
         <script id="tree-data" type="application/json">{{ tree|tojson }}</script>
         <script src="{{ url_for('static', filename='tree.js') }}" defer></script>

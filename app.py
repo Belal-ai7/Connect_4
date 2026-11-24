@@ -68,6 +68,7 @@ def tree_to_data(node):
         "beta": display_value(node.beta),
         "leaf_kind": node.leaf_kind.name if node.leaf_kind else None,
         "pruned": node.pruned,
+        "board": [[cell.name for cell in row] for row in node.board.grid],
         "children": [
             {"column": option.pos + 1, "node": tree_to_data(option.target)}
             for option in node.children
@@ -91,6 +92,16 @@ def game_result(board):
     return f"{winner}: you {human_score}, AI {ai_score} fours."
 
 
+def current_board_value(board, game):
+    """Evaluate the visible position using the selected heuristic as AI=FIRST."""
+    if not game:
+        return None
+    search_board = swap_players(board)
+    if board.is_full():
+        return search_board.terminal_value()
+    return get_heuristic(game["heuristic"]).evaluate(search_board)
+
+
 @app.get("/")
 def index():
     """Show the current game, board, and most recent AI search tree."""
@@ -103,6 +114,7 @@ def index():
         game=game,
         tree=tree,
         heuristics=REGISTRY,
+        board_value=current_board_value(board, game),
         result=game_result(board) if game and game["game_over"] else None,
     )
 
