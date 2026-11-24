@@ -1,18 +1,25 @@
 """Window-count heuristic with centre-column control."""
 
-from constants import AI, HUMAN
+from constants import AI, EMPTY, HUMAN
 from heuristic_interface import Heuristic
 from .common import window_counts
 
 
 class WindowHeuristic(Heuristic):
-    """Score open four-cell windows and centre-column discs."""
+    """Score open windows, playable threats, and centre-column discs."""
 
     name = "window"
-    description = "fours + open 3/2/1-windows + centre control (default)"
+    description = "threat-aware fours + open windows + centre control (default)"
 
     W = (0, 1, 10, 50, 1000)
+    W_THREAT_NOW = 120
+    W_THREAT_LATER = 40
     W_CENTER = 3
+
+    @staticmethod
+    def _playable(board, row, col):
+        """Whether the empty cell is where the next disc would land."""
+        return board.heights[col] == board.rows - 1 - row
 
     def evaluate(self, board):
         ai_score = human_score = 0
@@ -21,9 +28,11 @@ class WindowHeuristic(Heuristic):
             if ai and human:
                 continue
             if ai:
-                ai_score += self.W[ai]
+                score = self._window_score(board, window, ai)
+                ai_score += score
             elif human:
-                human_score += self.W[human]
+                score = self._window_score(board, window, human)
+                human_score += score
 
         middle = board.cols // 2
         centre_cols = [middle] if board.cols % 2 else [middle - 1, middle]
@@ -34,3 +43,14 @@ class WindowHeuristic(Heuristic):
                 elif board.grid[row][col] == HUMAN:
                     human_score += self.W_CENTER
         return ai_score - human_score
+
+    def _window_score(self, board, window, disc_count):
+        if disc_count == 3:
+            row, col = next(
+                (row, col)
+                for row, col in window
+                if board.grid[row][col] == EMPTY
+            )
+            return (self.W_THREAT_NOW if self._playable(board, row, col)
+                    else self.W_THREAT_LATER)
+        return self.W[disc_count]
