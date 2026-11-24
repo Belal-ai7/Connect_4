@@ -38,28 +38,6 @@ INF = float("inf")
 #  `Heuristic` interface)
 # --------------------------------------------------------------------------- #
 
-
-# --------------------------------------------------------------------------- #
-#  Minimax with alpha-beta pruning (+ tree recording)
-# --------------------------------------------------------------------------- #
-class Node:
-    """One node of the minimax tree (only built when printing is enabled)."""
-    __slots__ = ("col", "kind", "value", "alpha", "beta",
-                 "children", "pruned", "board_str", "leaf_kind")
-
-    def __init__(self, col, kind):
-        self.col = col            # move that led here (None for root)
-        self.kind = kind          # "MAX" or "MIN"
-        self.value = None
-        self.alpha = None         # alpha/beta values on ENTRY to the node
-        self.beta = None
-        self.children = []
-        self.pruned = 0           # number of siblings skipped by a cut-off
-        self.board_str = None
-        self.leaf_kind = None     # "heuristic" | "terminal" | None
-
-
-
 # --------------------------------------------------------------------------- #
 #  Tree printing
 # --------------------------------------------------------------------------- #

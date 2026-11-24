@@ -1,4 +1,4 @@
-from enums import NodeType, CellValue, Symbol
+from enums import NodeType, CellValue
 
 # Ensure an exact terminal result outweighs any non-terminal heuristic score.
 TERMINAL_MULT = 100_000
@@ -10,7 +10,7 @@ class Board:
         self.rows = rows
         self.cols = cols
 
-        self.grid : list[list[Symbol]] = [[Symbol.EMPTY] * cols for _ in range(rows)]
+        self.grid : list[list[CellValue]] = [[CellValue.EMPTY] * cols for _ in range(rows)]
         self.heights = [0] * cols          # discs currently in each column
         self.moves_made = 0
         # Pre-compute every window of 4 cells once (huge speed-up).
@@ -47,7 +47,7 @@ class Board:
     def valid_moves(self) -> list[int]:
         return [c for c in self.col_order if self.heights[c] < self.rows]
 
-    def drop_disk(self, col, key):
+    def drop_disk(self, col, key : CellValue):
         if self.heights[col] >= self.rows:
             raise Exception("cant drop a disk into a full column")
         
@@ -60,7 +60,7 @@ class Board:
     def is_full(self) -> bool:
         return self.moves_made == self.rows * self.cols
     
-    def count_fours(self, key) -> int:
+    def count_fours(self, key : CellValue) -> int:
         count = 0
         for w in self.windows:
             matches = True
@@ -73,7 +73,7 @@ class Board:
         return count
 
     def scores(self) -> tuple[int,int]:
-        return self.count_fours(CellValue.HUMAN), self.count_fours(Symbol.AI)
+        return self.count_fours(CellValue.FIRST), self.count_fours(CellValue.SECOND)
 
     def terminal_value(self):
         """Exact value of a full board: (computer fours - human fours) * big."""
@@ -91,18 +91,21 @@ class Node:
     """One node of the minimax tree"""
     # built recursively during solution building
 
-    def __init__(self, col, kind : NodeType, board: Board, depth : int):
-        self.depth = depth        # can also be considered the round number + 1
-        self.col = col            # play made in the last round to reach this state  
+    def __init__(self, kind : NodeType, board: Board, 
+                 alpha = float("-inf"), beta = float("inf")):
         self.board = board        # board after the previous play (before this round)
              
         self.kind = kind          # "MAX", "MIN" or "LEAF"
         self.value = None
-        self.alpha = None         # alpha/beta values on ENTRY to the node
-        self.beta = None
+        self.alpha = alpha         # alpha/beta values on ENTRY to the node
+        self.beta = beta
         
-        self.children : list[Node] = []
+        self.children : list[Option] = []
         self.pruned = 0           # number of siblings skipped by a cut-off
 
         self.leaf_kind = None     # "heuristic" | "terminal" | None
 
+class Option:
+    def __init__(self, col_move: int, target : Node):
+        self.pos = col_move
+        self.target = target
