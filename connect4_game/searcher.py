@@ -34,6 +34,7 @@ class Searcher:
     def __minimize(self, node : Node):
         if self.__base_case(node):
             return
+        node.subtree_nodes = 1
         moves = node.board.valid_moves()
         node.value = float("inf")
 
@@ -48,6 +49,7 @@ class Searcher:
             node.children.append(option)
 
             self.__maximize(child_node)
+            node.subtree_nodes += child_node.subtree_nodes
             
             node.beta = min(node.beta, child_node.value)
             node.value = min(node.value, child_node.value)
@@ -60,6 +62,7 @@ class Searcher:
     def __maximize(self, node : Node):
         if self.__base_case(node):
             return
+        node.subtree_nodes = 1
         moves = node.board.valid_moves()
         node.value = float("-inf")
 
@@ -74,6 +77,7 @@ class Searcher:
             node.children.append(option)
 
             self.__minimize(child_node)
+            node.subtree_nodes += child_node.subtree_nodes
             
             node.alpha = max(node.alpha, child_node.value)
             node.value = max(node.value, child_node.value)

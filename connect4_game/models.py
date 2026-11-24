@@ -110,6 +110,7 @@ class Node:
         
         self.children : list[Option] = []
         self.pruned = 0           # number of siblings skipped by a cut-off
+        self.subtree_nodes = 1    # this node plus expanded descendants
 
         self.leaf_kind = None     # "heuristic" | "terminal" | None
 

@@ -39,6 +39,9 @@
           <div class="board-eval"><span>CURRENT BOARD VALUE</span><strong>{{ board_value }}</strong>
             <small>{{ game.heuristic|replace('_', ' ')|title }} · AI perspective (positive favors AI)</small>
           </div>
+          {% if game.last_search %}
+            <div class="search-stats"><span>AI search time</span><b>{{ game.last_search.seconds }} s</b></div>
+          {% endif %}
         {% endif %}
 
         {% if game and not result %}

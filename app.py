@@ -2,6 +2,7 @@
 
 from uuid import uuid4
 from math import isinf
+from time import perf_counter
 
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 
@@ -68,6 +69,7 @@ def tree_to_data(node):
         "beta": display_value(node.beta),
         "leaf_kind": node.leaf_kind.name if node.leaf_kind else None,
         "pruned": node.pruned,
+        "subtree_nodes": node.subtree_nodes,
         "board": [[cell.name for cell in row] for row in node.board.grid],
         "children": [
             {"column": option.pos + 1, "node": tree_to_data(option.target)}
@@ -79,8 +81,10 @@ def tree_to_data(node):
 def choose_ai_move(board, depth, heuristic_name):
     """Search from the AI's perspective and return its move and search tree."""
     searcher = Searcher(get_heuristic(heuristic_name), depth)
+    started = perf_counter()
     column, root = searcher.best_move(swap_players(board))
-    return column, tree_to_data(root)
+    elapsed = perf_counter() - started
+    return column, tree_to_data(root), elapsed
 
 
 def game_result(board):
@@ -161,9 +165,14 @@ def play_move():
         save_game(board, game["depth"], game["heuristic"], game_over=True)
         return redirect(url_for("index"))
 
-    ai_column, tree = choose_ai_move(board, game["depth"], game["heuristic"])
+    ai_column, tree, elapsed = choose_ai_move(
+        board, game["depth"], game["heuristic"]
+    )
     board.drop_disk(ai_column, CellValue.SECOND)
     save_game(board, game["depth"], game["heuristic"], game_over=board.is_full())
+    session["game"]["last_search"] = {
+        "seconds": round(elapsed, 4),
+    }
     TREE_CACHE[session["game_id"]] = tree
     return redirect(url_for("index"))
 
