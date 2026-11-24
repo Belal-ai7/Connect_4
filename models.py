@@ -79,8 +79,8 @@ class Board:
 
     def terminal_value(self):
         """Exact value of a full board: (computer fours - human fours) * big."""
-        hu, ai = self.scores()
-        return (ai - hu) * TERMINAL_MULT
+        first, second = self.scores()
+        return (first - second) * TERMINAL_MULT
 
 
     def __str__(self):

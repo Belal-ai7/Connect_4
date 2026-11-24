@@ -1,8 +1,12 @@
 """Positional heuristic with playable and future threat scoring."""
 
-from constants import AI, EMPTY, HUMAN
+from models import CellValue
 from heuristic_interface import Heuristic
 from .common import window_counts
+
+AI = CellValue.FIRST
+HUMAN = CellValue.SECOND
+EMPTY = CellValue.EMPTY
 
 
 class PositionalHeuristic(Heuristic):

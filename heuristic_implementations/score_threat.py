@@ -1,9 +1,13 @@
 """Assignment-focused heuristic using scores, threats, and candidate moves."""
 
-from constants import AI, EMPTY, HUMAN
+from models import CellValue
 from heuristic_interface import Heuristic
 
 from .common import window_counts
+
+AI = CellValue.FIRST
+HUMAN = CellValue.SECOND
+EMPTY = CellValue.EMPTY
 
 
 class AssignmentHeuristic(Heuristic):
@@ -73,7 +77,7 @@ class AssignmentHeuristic(Heuristic):
         return points, extra_fours
 
     def evaluate(self, board):
-        human_fours, ai_fours = board.scores()
+        ai_fours, human_fours = board.scores()
         score = (ai_fours - human_fours) * self.SCORE_WEIGHT
 
         ai_points, ai_extra_fours = self._candidate_points(board, AI)

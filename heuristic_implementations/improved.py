@@ -13,10 +13,14 @@ Terms:
   7. centre          - column weight by distance from the middle column
 """
 
-from constants import AI, EMPTY, HUMAN
+from models import CellValue
 from heuristic_interface import Heuristic
 
 from .common import window_counts
+
+AI = CellValue.FIRST
+HUMAN = CellValue.SECOND
+EMPTY = CellValue.EMPTY
 
 
 class ImprovedAssignmentHeuristic(Heuristic):
@@ -153,7 +157,7 @@ class ImprovedAssignmentHeuristic(Heuristic):
 
     def evaluate(self, board):
         """Return a number: large positive means the AI is closer to winning."""
-        human_fours, ai_fours = board.scores()
+        ai_fours, human_fours = board.scores()
         ai_cols, ai_extra = self._immediate_wins(board, AI)
         human_cols, human_extra = self._immediate_wins(board, HUMAN)
         ai_threat, human_threat = self._threat_terms(board)

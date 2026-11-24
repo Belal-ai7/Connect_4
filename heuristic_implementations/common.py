@@ -1,6 +1,9 @@
 """Shared helpers used by the heuristic modules."""
 
-from constants import AI, HUMAN
+from models import CellValue
+
+AI = CellValue.FIRST
+HUMAN = CellValue.SECOND
 
 
 def window_counts(board, window):

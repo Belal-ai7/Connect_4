@@ -23,9 +23,12 @@ import random
 import sys
 import time
 
-from connect4 import Board, Searcher
-from constants import AI, HUMAN
+from models import Board, CellValue
+from searcher import Searcher
 from heuristic_implementations import REGISTRY
+
+AI = CellValue.FIRST
+HUMAN = CellValue.SECOND
 
 OPENING_MIN = 2
 OPENING_MAX = 4
@@ -35,7 +38,8 @@ def flipped(board):
     """Copy of the board with the two colours swapped, so the same
     'computer = AI' searcher can also play the other side."""
     b = board.copy()
-    swap = {0: 0, HUMAN: AI, AI: HUMAN}
+    swap = {CellValue.EMPTY: CellValue.EMPTY,
+            HUMAN: AI, AI: HUMAN}
     b.grid = [[swap[v] for v in row] for row in board.grid]
     return b
 
@@ -62,7 +66,7 @@ def random_opening(seed):
     for i in range(length):
         legal = [c for c in range(board.cols) if board.heights[c] < board.rows]
         col = rng.choice(legal)
-        board.drop(col, HUMAN if i % 2 == 0 else AI)
+        board.drop_disk(col, HUMAN if i % 2 == 0 else AI)
         moves.append(col)
     return moves
 
@@ -76,7 +80,7 @@ def play_game(first_name, second_name, k, opening):
     """
     board = Board()
     for i, col in enumerate(opening):
-        board.drop(col, HUMAN if i % 2 == 0 else AI)
+        board.drop_disk(col, HUMAN if i % 2 == 0 else AI)
 
     # Whoever moves next depends on how many opening discs were placed.
     turn = HUMAN if len(opening) % 2 == 0 else AI
@@ -84,21 +88,19 @@ def play_game(first_name, second_name, k, opening):
     # The first mover sees the board through flipped(), so its own discs
     # are AI and ai_moves_first is True. The second mover is the real AI
     # and moves second, so ai_moves_first is False.
-    s_first = Searcher(k, build_tree=False,
-                       heuristic=make_heuristic(first_name, ai_moves_first=True))
-    s_second = Searcher(k, build_tree=False,
-                        heuristic=make_heuristic(second_name, ai_moves_first=False))
+    s_first = Searcher(make_heuristic(first_name, ai_moves_first=True), k)
+    s_second = Searcher(make_heuristic(second_name, ai_moves_first=False), k)
 
     while not board.is_full():
         if turn == AI:
-            col, _, _ = s_second.best_move(board)
-            board.drop(col, AI)
+            col, _ = s_second.best_move(board)
+            board.drop_disk(col, AI)
         else:
-            col, _, _ = s_first.best_move(flipped(board))
-            board.drop(col, HUMAN)
+            col, _ = s_first.best_move(flipped(board))
+            board.drop_disk(col, HUMAN)
         turn = AI if turn == HUMAN else HUMAN
 
-    human_fours, ai_fours = board.scores()
+    ai_fours, human_fours = board.scores()
     return human_fours, ai_fours  # (first mover, second mover)
 
 
