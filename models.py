@@ -48,8 +48,10 @@ class Board:
         return [c for c in self.col_order if self.heights[c] < self.rows]
 
     def drop_disk(self, col, key : CellValue):
+        if not 0 <= col < self.cols:
+            raise ValueError(f"column index must be between 0 and {self.cols - 1}")
         if self.heights[col] >= self.rows:
-            raise Exception("cant drop a disk into a full column")
+            raise ValueError("cant drop a disk into a full column")
         
         row = self.rows - self.heights[col] - 1
         self.heights[col] += 1
@@ -83,7 +85,12 @@ class Board:
 
     def __str__(self):
         header = " ".join(str(c + 1) for c in range(self.cols))
-        rows = [" ".join(v.val for v in row) for row in self.grid]
+        symbols = {
+            CellValue.EMPTY: ".",
+            CellValue.FIRST: "X",
+            CellValue.SECOND: "O",
+        }
+        rows = [" ".join(symbols[v] for v in row) for row in self.grid]
         return header + "\n" + "\n".join(rows)
 
 
@@ -91,9 +98,10 @@ class Node:
     """One node of the minimax tree"""
     # built recursively during solution building
 
-    def __init__(self, kind : NodeType, board: Board, 
+    def __init__(self, kind : NodeType, board: Board, depth: int = 0,
                  alpha = float("-inf"), beta = float("inf")):
         self.board = board        # board after the previous play (before this round)
+        self.depth = depth
              
         self.kind = kind          # "MAX", "MIN" or "LEAF"
         self.value = None
