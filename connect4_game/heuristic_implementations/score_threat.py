@@ -1,7 +1,7 @@
 """Assignment-focused heuristic using scores, threats, and candidate moves."""
 
-from models import CellValue
-from heuristic_interface import Heuristic
+from ..models import CellValue
+from ..heuristic_interface import Heuristic
 
 from .common import window_counts
 
@@ -10,7 +10,7 @@ HUMAN = CellValue.SECOND
 EMPTY = CellValue.EMPTY
 
 
-class AssignmentHeuristic(Heuristic):
+class ScoreThreatHeuristic(Heuristic):
     """Estimate the final four-count advantage from the current position.
 
     The evaluation combines the current game score, playable moves that would

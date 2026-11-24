@@ -21,11 +21,11 @@ import argparse
 import sys
 import time
 
-from enums import *
-from heuristic_interface import Heuristic
-from heuristic_implementations import DEFAULT as DEFAULT_HEURISTIC
-from heuristic_implementations import REGISTRY as HEURISTICS
-from heuristic_implementations import get_heuristic
+from .enums import *
+from .heuristic_interface import Heuristic
+from .heuristic_implementations import DEFAULT as DEFAULT_HEURISTIC
+from .heuristic_implementations import REGISTRY as HEURISTICS
+from .heuristic_implementations import get_heuristic
 
 
 

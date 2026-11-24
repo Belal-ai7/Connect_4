@@ -1,13 +1,12 @@
 """Shared helpers used by the heuristic modules."""
 
-from models import CellValue
+from ..models import CellValue
 
 AI = CellValue.FIRST
 HUMAN = CellValue.SECOND
 
 
 def window_counts(board, window):
-    """Return the AI and human disc counts for one four-cell window."""
     ai = human = 0
     for row, col in window:
         value = board.grid[row][col]

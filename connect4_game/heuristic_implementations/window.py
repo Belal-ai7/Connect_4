@@ -1,7 +1,7 @@
 """Window-count heuristic with centre-column control."""
 
-from models import CellValue
-from heuristic_interface import Heuristic
+from ..models import CellValue
+from ..heuristic_interface import Heuristic
 from .common import window_counts
 
 AI = CellValue.FIRST

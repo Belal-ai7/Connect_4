@@ -1,4 +1,4 @@
-from enums import NodeType, CellValue
+from .enums import NodeType, CellValue
 
 # Ensure an exact terminal result outweighs any non-terminal heuristic score.
 TERMINAL_MULT = 100_000

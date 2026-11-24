@@ -23,9 +23,9 @@ import random
 import sys
 import time
 
-from models import Board, CellValue
-from searcher import Searcher
-from heuristic_implementations import REGISTRY
+from .models import Board, CellValue
+from .searcher import Searcher
+from .heuristic_implementations import REGISTRY
 
 AI = CellValue.FIRST
 HUMAN = CellValue.SECOND

@@ -1,6 +1,6 @@
-from heuristic_interface import Heuristic
-from models import Board, Node, Option
-from enums import NodeType, LeafType, CellValue
+from .heuristic_interface import Heuristic
+from .models import Board, Node, Option
+from .enums import NodeType, LeafType, CellValue
 
 class Searcher:
     # by default it tries to maximize (finds best play) via the best_move method

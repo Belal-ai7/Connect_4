@@ -1,7 +1,7 @@
 """Positional heuristic with playable and future threat scoring."""
 
-from models import CellValue
-from heuristic_interface import Heuristic
+from ..models import CellValue
+from ..heuristic_interface import Heuristic
 from .common import window_counts
 
 AI = CellValue.FIRST
