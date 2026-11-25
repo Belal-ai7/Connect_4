@@ -1,16 +1,3 @@
-"""
-Heuristic INTERFACE for the Connect 4 minimax agent.
-
-This file contains only the contract. The concrete heuristics live in
-heuristic_implementations.py.
-
-Contract (see Assignment 2, section 2.3)
-----------------------------------------
-Every heuristic is evaluated from the COMPUTER's point of view:
-    * bigger  number -> computer is nearer to winning
-    * smaller number -> human    is nearer to winning
-"""
-
 from abc import ABC, abstractmethod
 
 
